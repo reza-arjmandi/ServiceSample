@@ -30,7 +30,7 @@ public:
 	{
 		lock_guard<mutex> lock{ _mutex };
 		_file << "username: "
-			<< username
+			<< to_wstring(username)
 			<< " | "
 			<< line 
 			<< " | time: "
@@ -47,7 +47,7 @@ public:
 		lock_guard<mutex> lock{ _mutex };
 		wofstream file{ file_path, ios::app };
 		file << "username: "
-			<< wstring{ username.c_str() }
+			<< to_wstring(username.c_str())
 			<< " | "
 			<< line
 			<< " | time: "
@@ -69,6 +69,11 @@ private:
 	//	}
 	//	return wstring{ _user_name };
 	//}
+
+	wstring to_wstring(const string& str) const
+	{
+		return wstring{ str.cbegin(), str.cend() };
+	}
 
 	wstring get_time() const
 	{

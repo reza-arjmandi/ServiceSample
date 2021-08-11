@@ -74,12 +74,14 @@ private:
 			_is_resource_enabled = !_is_resource_enabled;
 			if (_is_resource_enabled)
 			{
-				_reporter->println(_name + L" is enabled");
+				_reporter->println(_name + L" is enabled", 
+					user_info_.user_name);
 				watcher_->watch_change(user_info_);
 			}
 			else
 			{
-				_reporter->println(_name + L" is not enabled");
+				_reporter->println(_name + L" is not enabled", 
+					user_info_.user_name);
 			}
 			init_watch(watcher_, user_info_);
 		},

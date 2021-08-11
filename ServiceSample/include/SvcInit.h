@@ -44,16 +44,17 @@ auto init_services()
             L"webcam", webcam_reg_key, file_reporter, user_info_parser) };
         auto microphone_watcher{ make_shared<RegKeyChangeReporter>(
             L"microphone", microphone_reg_key, file_reporter, user_info_parser) };
-        auto file_watcher{ make_shared<FileWatcher>(
-            file_reporter,
-            filesystem::path{"D:\\log-app.txt"},
-            filesystem::path{"D:\\log-open-log-file.txt"}
-        ) };
+        //auto file_watcher{ make_shared<FileWatcher>(
+        //    file_reporter,
+        //    filesystem::path{"D:\\log-app.txt"},
+        //    filesystem::path{"D:\\log-open-log-file.txt"}
+        //) };
+        shared_ptr<FileWatcher> file_watcher;
 
         return make_tuple(
             make_shared<StartMicroServiceGuard>(webcam_watcher),
-            make_shared<StartMicroServiceGuard>(microphone_watcher),
-            make_shared<StartMicroServiceGuard>(file_watcher)
+            make_shared<StartMicroServiceGuard>(microphone_watcher)
+            //shared_ptr<StartMicroServiceGuard>(file_watcher)
         );
     }
     catch (const exception& ex) {
@@ -64,8 +65,8 @@ auto init_services()
 
         return make_tuple(
             make_shared<StartMicroServiceGuard>(nullptr),
-            make_shared<StartMicroServiceGuard>(nullptr),
             make_shared<StartMicroServiceGuard>(nullptr)
+            //make_shared<StartMicroServiceGuard>(nullptr)
         );
     }
 }
@@ -111,10 +112,9 @@ VOID SvcInit(DWORD dwArgc, LPTSTR* lpszArgv)
     // TO_DO: Perform work until service stops.
     ImpersonateUser temp;
     temp.Logon("r.arjmandi", "faraz.com", "123456");
-    auto [start_webcam, start_mic, start_file] = init_services();
+    auto [start_webcam, start_mic] = init_services();
     if (start_webcam == nullptr 
-        || start_mic == nullptr 
-        || start_file == nullptr)
+        || start_mic == nullptr)
     {
         ReportSvcStatus(SERVICE_STOPPED, NO_ERROR, 0);
         return;
