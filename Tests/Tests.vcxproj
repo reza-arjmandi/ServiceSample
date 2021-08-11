@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{5f1062d7-f656-4547-bec8-de979a01e41e}</ProjectGuid>
-    <RootNamespace>ServiceSample</RootNamespace>
+    <ProjectGuid>{a171b886-8793-4ba2-95d3-46dbbee0e383}</ProjectGuid>
+    <RootNamespace>Tests</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -113,18 +113,15 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>false</SDLCheck>
+      <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\r.arjmandi\Downloads\ServiceSample\ServiceSample\ServiceSample\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,55 +129,22 @@
       <WarningLevel>Level3</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <SDLCheck>false</SDLCheck>
+      <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>false</ConformanceMode>
+      <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\r.arjmandi\Downloads\ServiceSample\ServiceSample\ServiceSample\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <BufferSecurityCheck>true</BufferSecurityCheck>
-      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
-      <AdditionalIncludeDirectories>include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>advapi32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ImpersonateUser.cpp" />
-    <ClCompile Include="Svc.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\Active.h" />
-    <ClInclude Include="include\DeadlineTimer.h" />
-    <ClInclude Include="include\FileReporter.h" />
-    <ClInclude Include="include\FileReporterException.h" />
-    <ClInclude Include="include\FileWatch.hpp" />
-    <ClInclude Include="include\FileWatcher.h" />
-    <ClInclude Include="include\Globals.h" />
-    <ClInclude Include="include\IMicroService.h" />
-    <ClInclude Include="include\ImpersonateUser.h" />
-    <ClInclude Include="include\IReporter.h" />
-    <ClInclude Include="include\RegKey.h" />
-    <ClInclude Include="include\RegKeyChangeReporter.h" />
-    <ClInclude Include="include\RegKeyException.h" />
-    <ClInclude Include="include\RegKeyWatcher.h" />
-    <ClInclude Include="include\RegKeyWatcherException.h" />
-    <ClInclude Include="include\ReportActiveApplication.h" />
-    <ClInclude Include="include\ReportSvcStatus.h" />
-    <ClInclude Include="include\Sample.h" />
-    <ClInclude Include="include\SvcCtrlHandler.h" />
-    <ClInclude Include="include\SvcInit.h" />
-    <ClInclude Include="include\SvcInstall.h" />
-    <ClInclude Include="include\SvcMain.h" />
-    <ClInclude Include="include\SvcReportEvent.h" />
-    <ClInclude Include="include\Synchronizer.h" />
-    <ClInclude Include="include\SynchronizerException.h" />
-    <ClInclude Include="include\UserInformation.h" />
-    <ClInclude Include="include\UserInformationParser.h" />
-    <ClInclude Include="StartMicroServiceGuard.h" />
+    <ClCompile Include="..\ServiceSample\ImpersonateUser.cpp" />
+    <ClCompile Include="Tests.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

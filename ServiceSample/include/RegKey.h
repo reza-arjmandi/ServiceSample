@@ -15,17 +15,39 @@ public:
 
     using NativeKeyType = HKEY;
 
-    RegKey(wstring main_key, wstring sub_key)
+    RegKey(const wstring& main_key, const wstring& sub_key)
+        :_main_key { main_key },
+        _sub_key{ sub_key }
     {
         _reg_key = open_reg_key(str_2_main_key(main_key), sub_key);
     }
 
     ~RegKey()
     {
-        close_reg_key(_reg_key);
+        close();
     }
 
-    NativeKeyType native_handler()
+    void open()
+    {
+        if (_is_open)
+        {
+            return;
+        }
+        _reg_key = open_reg_key(str_2_main_key(_main_key), _sub_key);
+        _is_open = true;
+    }
+
+    void close()
+    {
+        if (!_is_open)
+        {
+            return;
+        }
+        close_reg_key(_reg_key);
+        _is_open = false;
+    }
+
+    NativeKeyType native_handler() const
     {
         return _reg_key;
     }
@@ -78,6 +100,9 @@ private:
         return reg_key;
     }
 
+    bool _is_open{ false };
+    wstring _main_key;
+    wstring _sub_key;
     NativeKeyType _reg_key;
 
 };

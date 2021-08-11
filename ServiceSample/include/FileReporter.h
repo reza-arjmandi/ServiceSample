@@ -26,11 +26,11 @@ public:
 	{
 	}
 
-	void println(const wstring& line) final
+	void println(const wstring& line, const string& username) final
 	{
 		lock_guard<mutex> lock{ _mutex };
 		_file << "username: "
-			<< get_user_name()
+			<< username
 			<< " | "
 			<< line 
 			<< " | time: "
@@ -41,12 +41,13 @@ public:
 
 	void println(
 		const filesystem::path& file_path, 
-		const wstring& line) final
+		const wstring& line,
+		const string& username) final
 	{
 		lock_guard<mutex> lock{ _mutex };
 		wofstream file{ file_path, ios::app };
 		file << "username: "
-			<< get_user_name()
+			<< wstring{ username.c_str() }
 			<< " | "
 			<< line
 			<< " | time: "
@@ -57,17 +58,17 @@ public:
 
 private:
 
-	wstring get_user_name() const
-	{
-		TCHAR _user_name[INFO_BUFFER_SIZE];
-		DWORD bufCharCount{ INFO_BUFFER_SIZE };
-		if (!GetUserName(_user_name, &bufCharCount))
-		{
-			throw FileReporterException(
-				"GetUserName error.");
-		}
-		return wstring{ _user_name };
-	}
+	//wstring get_user_name() const
+	//{
+	//	TCHAR _user_name[INFO_BUFFER_SIZE];
+	//	DWORD bufCharCount{ INFO_BUFFER_SIZE };
+	//	if (!GetUserName(_user_name, &bufCharCount))
+	//	{
+	//		throw FileReporterException(
+	//			"GetUserName error.");
+	//	}
+	//	return wstring{ _user_name };
+	//}
 
 	wstring get_time() const
 	{

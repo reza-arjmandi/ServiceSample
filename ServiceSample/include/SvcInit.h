@@ -15,7 +15,7 @@
 #include "FileReporter.h"
 #include "StartMicroServiceGuard.h"
 #include "SvcReportEvent.h"
-#include "ImpersonateUser.h"
+#include "UserInformationParser.h"
 
 using namespace std;
 using namespace darka;
@@ -31,6 +31,7 @@ auto init_services()
             L"SOFTWARE\\Microsoft\\Windows\\"
             "CurrentVersion\\CapabilityAccessManager"
             "\\ConsentStore\\microphone" };
+        auto user_info_parser{ make_shared<UserInformationParser>("D:\\info.txt") };
 
         auto webcam_reg_key{
             make_shared<RegKey>(main_key, webcam_key) };
@@ -40,9 +41,9 @@ auto init_services()
             filesystem::path{"D:\\report.txt"}) };
 
         auto webcam_watcher{ make_shared<RegKeyChangeReporter>(
-            L"webcam", webcam_reg_key, file_reporter) };
+            L"webcam", webcam_reg_key, file_reporter, user_info_parser) };
         auto microphone_watcher{ make_shared<RegKeyChangeReporter>(
-            L"microphone", microphone_reg_key, file_reporter) };
+            L"microphone", microphone_reg_key, file_reporter, user_info_parser) };
         auto file_watcher{ make_shared<FileWatcher>(
             file_reporter,
             filesystem::path{"D:\\log-app.txt"},

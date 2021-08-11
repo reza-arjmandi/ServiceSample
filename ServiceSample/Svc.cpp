@@ -25,12 +25,6 @@ int __cdecl _tmain(int argc, TCHAR* argv[])
         return 0;
     }
 
-    if (lstrcmpi(argv[1], TEXT("test")) == 0)
-    {
-        SvcInstall();
-        return 0;
-    }
-
     // TO_DO: Add any additional services for the process to this table.
     SERVICE_TABLE_ENTRY DispatchTable[] =
     {

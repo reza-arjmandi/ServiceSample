@@ -8,6 +8,10 @@ using namespace std;
 #include "RegKey.h"
 #include "Synchronizer.h"
 #include "RegKeyWatcherException.h"
+#include "UserInformation.h"
+#include "ImpersonateUser.h"
+
+using namespace darka;
 
 template<typename IOContextType>
 class RegKeyWatcher
@@ -23,20 +27,27 @@ public:
     {
     }
 
-    void watch_change()
+    void watch_change(const UserInformation& user_info)
     {
+        _impersonate_user.Logon(
+            user_info.user_name, 
+            user_info.doamin, 
+            user_info.password);
         Synchronizer sync;
         notify_if_reg_key_is_changed(
             _reg_key->native_handler(), 
             sync.native_handler());
         sync.wait();
+        _impersonate_user.Logoff();
     }
     
     template<typename HandlerType>
-    void async_watch_change(HandlerType&& handler)
+    void async_watch_change(HandlerType&& handler, const UserInformation& user_info)
     {
-        _io_ctx.send([&, _handler{forward<HandlerType>(handler)}]() {
-            watch_change();
+        _io_ctx.send([&, 
+            _handler{ forward<HandlerType>(handler) }, 
+            user_info_{ user_info }]() {
+            watch_change(user_info_);
             _handler();
         });
     }
@@ -65,6 +76,7 @@ private:
         }
     }
 
+    ImpersonateUser _impersonate_user;
     shared_ptr<RegKey> _reg_key;
     IOContextType& _io_ctx;
 

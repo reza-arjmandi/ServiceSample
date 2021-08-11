@@ -12,9 +12,12 @@ public:
 
 	virtual ~IReporter() = default;
 	
-	virtual void println(const wstring& line) = 0;
+	virtual void println(
+		const wstring& line, 
+		const string& username) = 0;
 	virtual void println(
 		const filesystem::path& file_path, 
-		const wstring& line) = 0;
+		const wstring& line,
+		const string& username) = 0;
 
 };
