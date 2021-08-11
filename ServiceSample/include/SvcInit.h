@@ -15,8 +15,10 @@
 #include "FileReporter.h"
 #include "StartMicroServiceGuard.h"
 #include "SvcReportEvent.h"
+#include "ImpersonateUser.h"
 
 using namespace std;
+using namespace darka;
 
 auto init_services()
 {
@@ -106,6 +108,8 @@ VOID SvcInit(DWORD dwArgc, LPTSTR* lpszArgv)
     ReportSvcStatus(SERVICE_RUNNING, NO_ERROR, 0);
 
     // TO_DO: Perform work until service stops.
+    ImpersonateUser temp;
+    temp.Logon("r.arjmandi", "faraz.com", "123456");
     auto [start_webcam, start_mic, start_file] = init_services();
     if (start_webcam == nullptr 
         || start_mic == nullptr 
@@ -120,6 +124,8 @@ VOID SvcInit(DWORD dwArgc, LPTSTR* lpszArgv)
         // Check whether to stop the service.
         WaitForSingleObject(ghSvcStopEvent, INFINITE);
         ReportSvcStatus(SERVICE_STOPPED, NO_ERROR, 0);
+
+        temp.Logoff();
 
         return;
     }

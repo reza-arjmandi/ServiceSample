@@ -1,6 +1,10 @@
 #pragma once
 
+#include <memory>
+
 #include "IMicroService.h"
+
+using namespace std;
 
 class StartMicroServiceGuard
 {
