@@ -69,11 +69,16 @@ private:
 			{
 				_impersonate_user.Logon(info.user_name, info.domain, info.password);
 
-				wchar_t cmd_[1024] = L"D:\\GetActiveWindow.exe";
-				auto app_title_{ ProcessUtil::run_command(cmd_, info) };
+				//wchar_t cmd_[1024] = L"D:\\GetActiveWindow.exe";
+				//auto app_title_{ ProcessUtil::run_command(cmd_, info) };
 
 				auto search_user = _user_apptitle.find(info.user_name);
-				auto app_title{ wstring{ app_title_.begin(), app_title_.end() } };
+
+				HWND res =GetForegroundWindow();
+				wchar_t lpString[1024] = TEXT("Sample Text");
+				GetWindowText(res, lpString, 1024);
+
+				wstring app_title{ lpString  };
 				if (search_user != _user_apptitle.end()) {
 					if (search_user->second == app_title) {
 						break;
@@ -82,7 +87,6 @@ private:
 				_user_apptitle[info.user_name] = app_title;
 
 				_reporter->println(report_path, L" active window is : " + app_title, info.user_name);
-
 
 				_impersonate_user.Logoff();
 			}

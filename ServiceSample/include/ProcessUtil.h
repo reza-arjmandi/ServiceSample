@@ -73,19 +73,20 @@ public:
         }
 
         // Launch the app. We should return immediately (while the app is running)
-        
-        if (!CreateProcessWithLogonW(
-            wstring{ user_info.user_name.cbegin(), user_info.user_name.cend() }.c_str(),
-            wstring{ user_info.domain.cbegin(), user_info.domain.cend() }.c_str(),
-            wstring{ user_info.password.cbegin(), user_info.password.cend() }.c_str(),
-            LOGON_WITH_PROFILE,
-            0,
-            cmd,
-            0,
-            0,
-            0,
-            &sinfo, &pinfo
-        ))
+        //CreateProcessWithLogonW(
+        //    wstring{ user_info.user_name.cbegin(), user_info.user_name.cend() }.c_str(),
+        //    wstring{ user_info.domain.cbegin(), user_info.domain.cend() }.c_str(),
+        //    wstring{ user_info.password.cbegin(), user_info.password.cend() }.c_str(),
+        //    LOGON_WITH_PROFILE,
+        //    0,
+        //    cmd,
+        //    0_In_        DWORD dwCreationFlags,
+        //    _In_opt_    LPVOID lpEnvironment,
+        //    _In_opt_    LPCWSTR lpCurrentDirectory,
+        //    _In_        LPSTARTUPINFOW lpStartupInfo,
+        //    _Out_       LPPROCESS_INFORMATION lpProcessInformation
+        //)
+        if (!CreateProcess(0, cmd, 0, 0, TRUE, 0, 0, 0, &sinfo, &pinfo))
         {
             MessageBox(0, &NoLaunchMsg[0], &ErrorStr[0], MB_OK | MB_ICONEXCLAMATION);
             CloseHandle(sinfo.hStdInput);
