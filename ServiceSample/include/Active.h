@@ -34,7 +34,7 @@ public:
 	}
 
 	~Active() {
-		_thd.join();
+		stop();
 	}
 
 	void send(MessageType m) {

@@ -44,6 +44,7 @@ public:
 			return;
 		}
 		_is_stopped = true;
+		_watcher->release_wait();
 		_active->stop();
 	}
 

@@ -28,12 +28,28 @@ public:
 
     void wait()
     {
-        if (WaitForSingleObject(_wait_handler, INFINITE) == WAIT_FAILED)
+        while(!_is_stopped) 
         {
-            throw SynchronizerException{
-                "Error in WaitForSingleObject."
-            };
+            DWORD milli{ 500 };
+            auto res{ WaitForSingleObject(_wait_handler, milli) };
+            if (res == WAIT_FAILED)
+            {
+                throw SynchronizerException{
+                    "Error in WaitForSingleObject."
+                };
+                return;
+            }
+            if (res == WAIT_OBJECT_0)
+            {
+                break;
+            }
         }
+        
+    }
+
+    void release_wait()
+    {
+        _is_stopped = true;
     }
 
 private:
@@ -62,6 +78,7 @@ private:
         }
     }
 
+    bool _is_stopped{ false };
     NativeHandlerType _wait_handler;
 
 };

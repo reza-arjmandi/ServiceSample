@@ -27,6 +27,7 @@ public:
 		shared_ptr<IReporter> reporter)
 		: _reporter{ reporter }
 	{
+		ofstream{ _report_path };
 		init();
 	}
 

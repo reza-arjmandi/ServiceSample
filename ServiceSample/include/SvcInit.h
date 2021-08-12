@@ -7,6 +7,7 @@
 #include <string>
 #include <memory>
 #include <filesystem>
+#include <vector>
 
 #include "Globals.h"
 #include "ReportSvcStatus.h"
@@ -20,57 +21,74 @@
 
 using namespace std;
 
-auto init_services()
+vector<shared_ptr<StartMicroServiceGuard>> init_services()
 {
+    vector<shared_ptr<StartMicroServiceGuard>> services;
     try {
+        auto file_reporter{ make_shared<FileReporter>() };
+        
+        auto active_app_reporter{
+            make_shared<ActiveApplicationReporter>(
+                file_reporter)
+        };
+        services.push_back(
+            make_shared<StartMicroServiceGuard>(active_app_reporter)
+        );
+
         wstring main_key{ L"HKCU" };
         wstring webcam_key{
             L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion"
             "\\CapabilityAccessManager\\ConsentStore\\webcam" };
+        auto webcam_reg_key{
+            make_shared<RegKey>(main_key, webcam_key) };
+        auto webcam_watcher{
+            make_shared<RegKeyChangeReporter>(
+                L"webcam",
+                webcam_reg_key,
+                filesystem::path{"C:\\log-camera.txt"},
+                file_reporter
+            )
+        };
+        services.push_back(
+            make_shared<StartMicroServiceGuard>(webcam_watcher)
+        );
+
         wstring microphone_key{
             L"SOFTWARE\\Microsoft\\Windows\\"
             "CurrentVersion\\CapabilityAccessManager"
             "\\ConsentStore\\microphone" };
-
-        auto webcam_reg_key{
-            make_shared<RegKey>(main_key, webcam_key) };
         auto microphone_reg_key{
             make_shared<RegKey>(main_key, microphone_key) };
-        auto file_reporter{ make_shared<FileReporter>() };
-
-        auto webcam_watcher{make_shared<RegKeyChangeReporter>(
-            L"webcam", webcam_reg_key, filesystem::path{"C:\\log-camera.txt"}, file_reporter) };
-        auto microphone_watcher{ make_shared<RegKeyChangeReporter>(
-            L"microphone", microphone_reg_key, filesystem::path{"C:\\log-microphone.txt"}, file_reporter) };
-        auto file_watcher{ make_shared<FileWatcher>(
-            file_reporter,
-            filesystem::path{"D:\\log-app.txt"},
-            filesystem::path{"D:\\log-open-log-file.txt"}
-        ) };
-        auto _active_app_reporter{ make_shared<ActiveApplicationReporter>(file_reporter) };
-
-
-        return make_tuple(
-            make_shared<StartMicroServiceGuard>(_active_app_reporter),
-            make_shared<StartMicroServiceGuard>(webcam_watcher),
-            make_shared<StartMicroServiceGuard>(microphone_watcher)/*,
-            make_shared<StartMicroServiceGuard>(microphone_watcher),
-            make_shared<StartMicroServiceGuard>(file_watcher)*/
+        auto microphone_watcher{ 
+            make_shared<RegKeyChangeReporter>(
+                L"microphone", 
+                microphone_reg_key, 
+                filesystem::path{"C:\\log-microphone.txt"}, 
+                file_reporter
+            ) 
+        };
+        services.push_back(
+            make_shared<StartMicroServiceGuard>(microphone_watcher)
         );
+        
+        auto file_watcher{ 
+            make_shared<FileWatcher>(
+                file_reporter,
+                filesystem::path{"C:\\log-app.txt"}
+            ) 
+        };
+        services.push_back(
+            make_shared<StartMicroServiceGuard>(file_watcher)
+        );
+
+        return services;
     }
     catch (const exception& ex) {
         auto size_{ strlen(ex.what()) };
         wstring wc(size_, L'#');
         mbstowcs(&wc[0], ex.what(), size_);
         SvcReportEvent(wc.data());
-
-        return make_tuple(
-            make_shared<StartMicroServiceGuard>(nullptr),
-            make_shared<StartMicroServiceGuard>(nullptr),
-            make_shared<StartMicroServiceGuard>(nullptr)/*,
-            make_shared<StartMicroServiceGuard>(nullptr),
-            make_shared<StartMicroServiceGuard>(nullptr)*/
-        );
+        return services;
     }
 }
 
@@ -113,8 +131,8 @@ VOID SvcInit(DWORD dwArgc, LPTSTR* lpszArgv)
     ReportSvcStatus(SERVICE_RUNNING, NO_ERROR, 0);
 
     // TO_DO: Perform work until service stops.
-    auto [active_app_reporter, webcam_reporter, mic_reporter] = init_services();
-    if (active_app_reporter == nullptr | webcam_reporter == nullptr | mic_reporter == nullptr)
+    auto services{ init_services() };
+    if (services.empty())
     {
         ReportSvcStatus(SERVICE_STOPPED, NO_ERROR, 0);
         return;

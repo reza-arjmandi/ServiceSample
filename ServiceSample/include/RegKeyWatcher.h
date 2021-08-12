@@ -25,12 +25,12 @@ public:
 
     void watch_change()
     {
-        Synchronizer sync;
+        _sync = make_unique<Synchronizer>();
         _reg_key->open();
         notify_if_reg_key_is_changed(
             _reg_key->native_handler(), 
-            sync.native_handler());
-        sync.wait();
+            _sync->native_handler());
+        _sync->wait();
         _reg_key->close();
     }
     
@@ -42,6 +42,14 @@ public:
             watch_change();
             _handler();
         });
+    }
+
+    void release_wait()
+    {
+        if (_sync)
+        {
+            _sync->release_wait();
+        }
     }
 
 private:
@@ -67,6 +75,8 @@ private:
             return;
         }
     }
+
+    unique_ptr<Synchronizer> _sync{ nullptr };
 
     shared_ptr<RegKey> _reg_key;
     IOContextType& _io_ctx;
