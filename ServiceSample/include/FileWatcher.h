@@ -56,7 +56,7 @@ public:
 private:
 
 	filesystem::path _target_file;
-	filesystem::path _report_file{"C:\\log-open-log-file.txt"};
+	filesystem::path _report_file{ "C:\\log-open-log-file.txt" };
 	shared_ptr<IReporter> _reporter;
 	unique_ptr<FileWatch<filesystem::path>> _watch{ nullptr };
 

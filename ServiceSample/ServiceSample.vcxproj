@@ -149,7 +149,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="ImpersonateUser.cpp" />
     <ClCompile Include="Svc.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,9 +160,7 @@
     <ClInclude Include="include\FileWatcher.h" />
     <ClInclude Include="include\Globals.h" />
     <ClInclude Include="include\IMicroService.h" />
-    <ClInclude Include="include\ImpersonateUser.h" />
     <ClInclude Include="include\IReporter.h" />
-    <ClInclude Include="include\ProcessUtil.h" />
     <ClInclude Include="include\RegKey.h" />
     <ClInclude Include="include\RegKeyChangeReporter.h" />
     <ClInclude Include="include\RegKeyException.h" />
@@ -180,8 +177,6 @@
     <ClInclude Include="include\SvcReportEvent.h" />
     <ClInclude Include="include\Synchronizer.h" />
     <ClInclude Include="include\SynchronizerException.h" />
-    <ClInclude Include="include\UserInformation.h" />
-    <ClInclude Include="include\UserInformationParser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

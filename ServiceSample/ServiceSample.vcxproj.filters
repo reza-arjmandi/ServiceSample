@@ -18,9 +18,6 @@
     <ClCompile Include="Svc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ImpersonateUser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Active.h">
@@ -95,19 +92,7 @@
     <ClInclude Include="include\SynchronizerException.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\ImpersonateUser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UserInformation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\UserInformationParser.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\StartMicroServiceGuard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\ProcessUtil.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

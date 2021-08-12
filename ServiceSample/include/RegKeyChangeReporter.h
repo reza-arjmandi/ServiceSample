@@ -33,7 +33,7 @@ public:
 
 		_active = make_shared<Active>();
 		_watcher = 
-			make_shared<RegKeyWatcher<Active>>( *_active, _reg_key);
+			make_shared<RegKeyWatcher<Active>>(*_active, _reg_key);
 		init_watch();
 	}
 
@@ -59,11 +59,11 @@ private:
 			_is_resource_enabled = !_is_resource_enabled;
 			if (_is_resource_enabled)
 			{
-				_reporter->println(_report_file_path, _name + L" is enabled");
+				_reporter->println(_report_file_path, _name + L" is active");
 			}
 			else
 			{
-				_reporter->println(_report_file_path, _name + L" is not enabled");
+				_reporter->println(_report_file_path, _name + L" becomes inactive");
 			}
 			init_watch();
 		});

@@ -8,15 +8,10 @@
 #include <map>
 #include <filesystem>
 
-#include "atlstr.h"
 #include "Active.h"
 #include "DeadlineTimer.h"
 #include "IMicroService.h"
-#include "ImpersonateUser.h"
 #include "IReporter.h"
-#include "ProcessUtil.h"
-
-using namespace darka;
 
 class ActiveApplicationReporter : public IMicroService
 {
@@ -33,7 +28,8 @@ public:
 
 	void start() final
 	{
-		if (_is_started) {
+		if (_is_started) 
+		{
 			return;
 		}
 		_is_started = true;
@@ -66,7 +62,8 @@ private:
 			if(window_title != _last_window_title)
 			{
 				_last_window_title = window_title;
-				_reporter->println(_report_path, L" active window is : " + window_title);
+				_reporter->println(_report_path, 
+					L" active window is : " + window_title);
 			}
 			init_timer();
 		});

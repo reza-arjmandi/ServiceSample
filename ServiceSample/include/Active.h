@@ -8,49 +8,57 @@
 
 using namespace std;
 
-class Active {
+class Active 
+{
 
 public:
 
 	using MessageType = function<void()>;
 
-	Active() {
-		_thd = thread([&]() {
-			while (!_is_stopped)
+	Active() 
+	{
+		_thd = thread([&]() 
 			{
-				lock_guard<recursive_mutex> lock{ _mutex };
-				if (_msg_queue.size() == 0)
+				while (!_is_stopped)
 				{
-					this_thread::sleep_for(
-						chrono::milliseconds(100));
-				}
-				else
-				{
-					_msg_queue.front()();
-					_msg_queue.pop();
+					lock_guard<recursive_mutex> lock{ _mutex };
+					if (_msg_queue.size() == 0)
+					{
+						this_thread::sleep_for(
+							chrono::milliseconds(100));
+					}
+					else
+					{
+						_msg_queue.front()();
+						_msg_queue.pop();
+					}
 				}
 			}
-			});
+		);
 	}
 
 	~Active() {
 		stop();
 	}
 
-	void send(MessageType m) {
+	void send(MessageType m) 
+	{
 		lock_guard<recursive_mutex> lock{ _mutex };
 		_msg_queue.push(m);
 	}
 
-	void stop() {
+	void stop() 
+	{
 		if (_is_stopped)
 		{
 			return;
 		}
 
-		_msg_queue.push([&]() {
+		_msg_queue.push([&]() 
+			{
 			_is_stopped = true;
-			});
+			}
+		);
 		_thd.join();
 	}
 

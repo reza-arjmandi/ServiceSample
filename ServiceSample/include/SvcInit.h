@@ -16,7 +16,6 @@
 #include "FileReporter.h"
 #include "StartMicroServiceGuard.h"
 #include "SvcReportEvent.h"
-#include "UserInformationParser.h"
 #include "ActiveApplicationReporter.h"
 
 using namespace std;
@@ -38,9 +37,11 @@ vector<shared_ptr<StartMicroServiceGuard>> init_services()
         wstring main_key{ L"HKCU" };
         wstring webcam_key{
             L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion"
-            "\\CapabilityAccessManager\\ConsentStore\\webcam" };
+            "\\CapabilityAccessManager\\ConsentStore\\webcam" 
+        };
         auto webcam_reg_key{
-            make_shared<RegKey>(main_key, webcam_key) };
+            make_shared<RegKey>(main_key, webcam_key) 
+        };
         auto webcam_watcher{
             make_shared<RegKeyChangeReporter>(
                 L"webcam",
@@ -56,9 +57,11 @@ vector<shared_ptr<StartMicroServiceGuard>> init_services()
         wstring microphone_key{
             L"SOFTWARE\\Microsoft\\Windows\\"
             "CurrentVersion\\CapabilityAccessManager"
-            "\\ConsentStore\\microphone" };
+            "\\ConsentStore\\microphone" 
+        };
         auto microphone_reg_key{
-            make_shared<RegKey>(main_key, microphone_key) };
+            make_shared<RegKey>(main_key, microphone_key) 
+        };
         auto microphone_watcher{ 
             make_shared<RegKeyChangeReporter>(
                 L"microphone", 
