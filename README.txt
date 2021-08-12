@@ -19,7 +19,7 @@ in the C drive root directory:
 
 ## Install Service:
 
-1- Build ServiceSmaple project(or extract Binary.zip file to get the ServiceSample.exe)
+1- Build ServiceSmaple project(or use ServiceSample.exe in Binary directory)
 2- Run following command with Administrator privilege to install service:
 	ServiceSample.exe install
 
