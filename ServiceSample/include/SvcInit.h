@@ -51,7 +51,7 @@ auto init_services()
             filesystem::path{"D:\\log-open-log-file.txt"},
             user_info_parser
         ) };*/
-        auto _active_app_reporter{ make_shared<ActiveApplicationReporter>(user_info_parser, file_reporter) };
+        auto _active_app_reporter{ make_shared<ActiveApplicationReporter>(file_reporter) };
 
 
         return make_tuple(

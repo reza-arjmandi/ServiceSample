@@ -26,11 +26,11 @@ public:
 	{
 	}
 
-	void println(const wstring& line, const string& username) final
+	void println(const wstring& line) final
 	{
 		lock_guard<mutex> lock{ _mutex };
 		_file << "username: "
-			<< to_wstring(username)
+			<< get_user_name()
 			<< " | "
 			<< line 
 			<< " | time: "
@@ -41,13 +41,12 @@ public:
 
 	void println(
 		const filesystem::path& file_path, 
-		const wstring& line,
-		const string& username) final
+		const wstring& line) final
 	{
 		lock_guard<mutex> lock{ _mutex };
-		wofstream file{ file_path, ios::app };
+		wofstream file{ file_path, ios::app | ios::ate | ios::out };
 		file << "username: "
-			<< to_wstring(username.c_str())
+			<< get_user_name()
 			<< " | "
 			<< line
 			<< " | time: "
@@ -58,22 +57,22 @@ public:
 
 private:
 
-	//wstring get_user_name() const
-	//{
-	//	TCHAR _user_name[INFO_BUFFER_SIZE];
-	//	DWORD bufCharCount{ INFO_BUFFER_SIZE };
-	//	if (!GetUserName(_user_name, &bufCharCount))
-	//	{
-	//		throw FileReporterException(
-	//			"GetUserName error.");
-	//	}
-	//	return wstring{ _user_name };
-	//}
-
-	wstring to_wstring(const string& str) const
+	wstring get_user_name() const
 	{
-		return wstring{ str.cbegin(), str.cend() };
+		TCHAR _user_name[INFO_BUFFER_SIZE];
+		DWORD bufCharCount{ INFO_BUFFER_SIZE };
+		if (!GetUserName(_user_name, &bufCharCount))
+		{
+			throw FileReporterException(
+				"GetUserName error.");
+		}
+		return wstring{ _user_name };
 	}
+
+	//wstring to_wstring(const string& str) const
+	//{
+	//	return wstring{ str.cbegin(), str.cend() };
+	//}
 
 	wstring get_time() const
 	{
