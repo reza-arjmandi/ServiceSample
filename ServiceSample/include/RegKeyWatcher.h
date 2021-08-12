@@ -31,13 +31,15 @@ public:
     {
         _impersonate_user.Logon(
             user_info.user_name, 
-            user_info.doamin, 
+            user_info.domain, 
             user_info.password);
         Synchronizer sync;
+        _reg_key->open();
         notify_if_reg_key_is_changed(
             _reg_key->native_handler(), 
             sync.native_handler());
         sync.wait();
+        _reg_key->close();
         _impersonate_user.Logoff();
     }
     

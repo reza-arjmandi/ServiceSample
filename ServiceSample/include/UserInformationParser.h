@@ -3,6 +3,7 @@
 #include <filesystem>
 #include <fstream>
 #include <vector>
+#include <sstream>
 
 #include "UserInformation.h"
 
@@ -33,7 +34,7 @@ private:
         {
             istringstream sstr{ line };
             UserInformation info;
-            sstr >> info.user_name >> info.password >> info.doamin;
+            sstr >> info.user_name >> info.password >> info.domain;
             _user_informations.push_back(info);
         }
     }

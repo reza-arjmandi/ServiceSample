@@ -8,6 +8,6 @@ struct UserInformation
 
     string user_name{ "" };
     string password{ "" };
-    string doamin{ "" };
+    string domain{ "" };
 
 };

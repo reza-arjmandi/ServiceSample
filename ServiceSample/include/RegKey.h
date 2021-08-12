@@ -19,7 +19,6 @@ public:
         :_main_key { main_key },
         _sub_key{ sub_key }
     {
-        _reg_key = open_reg_key(str_2_main_key(main_key), sub_key);
     }
 
     ~RegKey()

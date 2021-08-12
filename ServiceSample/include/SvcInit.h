@@ -16,9 +16,9 @@
 #include "StartMicroServiceGuard.h"
 #include "SvcReportEvent.h"
 #include "UserInformationParser.h"
+#include "ActiveApplicationReporter.h"
 
 using namespace std;
-using namespace darka;
 
 auto init_services()
 {
@@ -31,6 +31,7 @@ auto init_services()
             L"SOFTWARE\\Microsoft\\Windows\\"
             "CurrentVersion\\CapabilityAccessManager"
             "\\ConsentStore\\microphone" };
+
         auto user_info_parser{ make_shared<UserInformationParser>("D:\\info.txt") };
 
         auto webcam_reg_key{
@@ -40,21 +41,23 @@ auto init_services()
         auto file_reporter{ make_shared<FileReporter>(
             filesystem::path{"D:\\report.txt"}) };
 
-        auto webcam_watcher{ make_shared<RegKeyChangeReporter>(
+        /*auto webcam_watcher{make_shared<RegKeyChangeReporter>(
             L"webcam", webcam_reg_key, file_reporter, user_info_parser) };
         auto microphone_watcher{ make_shared<RegKeyChangeReporter>(
             L"microphone", microphone_reg_key, file_reporter, user_info_parser) };
-        //auto file_watcher{ make_shared<FileWatcher>(
-        //    file_reporter,
-        //    filesystem::path{"D:\\log-app.txt"},
-        //    filesystem::path{"D:\\log-open-log-file.txt"}
-        //) };
-        shared_ptr<FileWatcher> file_watcher;
+        auto file_watcher{ make_shared<FileWatcher>(
+            file_reporter,
+            filesystem::path{"D:\\log-app.txt"},
+            filesystem::path{"D:\\log-open-log-file.txt"},
+            user_info_parser
+        ) };*/
+        auto _active_app_reporter{ make_shared<ActiveApplicationReporter>(user_info_parser, file_reporter) };
+
 
         return make_tuple(
-            make_shared<StartMicroServiceGuard>(webcam_watcher),
-            make_shared<StartMicroServiceGuard>(microphone_watcher)
-            //shared_ptr<StartMicroServiceGuard>(file_watcher)
+            make_shared<StartMicroServiceGuard>(_active_app_reporter)/*,
+            make_shared<StartMicroServiceGuard>(microphone_watcher),
+            make_shared<StartMicroServiceGuard>(file_watcher)*/
         );
     }
     catch (const exception& ex) {
@@ -64,9 +67,9 @@ auto init_services()
         SvcReportEvent(wc.data());
 
         return make_tuple(
+            make_shared<StartMicroServiceGuard>(nullptr)/*,
             make_shared<StartMicroServiceGuard>(nullptr),
-            make_shared<StartMicroServiceGuard>(nullptr)
-            //make_shared<StartMicroServiceGuard>(nullptr)
+            make_shared<StartMicroServiceGuard>(nullptr)*/
         );
     }
 }
@@ -110,11 +113,8 @@ VOID SvcInit(DWORD dwArgc, LPTSTR* lpszArgv)
     ReportSvcStatus(SERVICE_RUNNING, NO_ERROR, 0);
 
     // TO_DO: Perform work until service stops.
-    ImpersonateUser temp;
-    temp.Logon("r.arjmandi", "faraz.com", "123456");
-    auto [start_webcam, start_mic] = init_services();
-    if (start_webcam == nullptr 
-        || start_mic == nullptr)
+    auto [file_reporter] = init_services();
+    if (file_reporter == nullptr )
     {
         ReportSvcStatus(SERVICE_STOPPED, NO_ERROR, 0);
         return;
@@ -125,8 +125,6 @@ VOID SvcInit(DWORD dwArgc, LPTSTR* lpszArgv)
         // Check whether to stop the service.
         WaitForSingleObject(ghSvcStopEvent, INFINITE);
         ReportSvcStatus(SERVICE_STOPPED, NO_ERROR, 0);
-
-        temp.Logoff();
 
         return;
     }

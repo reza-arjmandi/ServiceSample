@@ -168,9 +168,10 @@
     <ClInclude Include="include\RegKeyException.h" />
     <ClInclude Include="include\RegKeyWatcher.h" />
     <ClInclude Include="include\RegKeyWatcherException.h" />
-    <ClInclude Include="include\ReportActiveApplication.h" />
+    <ClInclude Include="include\ActiveApplicationReporter.h" />
     <ClInclude Include="include\ReportSvcStatus.h" />
     <ClInclude Include="include\Sample.h" />
+    <ClInclude Include="include\StartMicroServiceGuard.h" />
     <ClInclude Include="include\SvcCtrlHandler.h" />
     <ClInclude Include="include\SvcInit.h" />
     <ClInclude Include="include\SvcInstall.h" />
@@ -180,7 +181,6 @@
     <ClInclude Include="include\SynchronizerException.h" />
     <ClInclude Include="include\UserInformation.h" />
     <ClInclude Include="include\UserInformationParser.h" />
-    <ClInclude Include="StartMicroServiceGuard.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

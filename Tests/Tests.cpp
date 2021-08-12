@@ -9,36 +9,51 @@
 
 #include "UserInformation.h"
 #include "UserInformationParser.h"
+#include "FileWatcher.h"
+#include "ImpersonateUser.h"
+#include "ActiveApplicationReporter.h"
 
 int main()
 {
-    auto parser{ make_shared<UserInformationParser>("info.txt") };
+	//auto parser{ make_shared<UserInformationParser>("D:\\info.txt") };
 
-    wstring main_key{ L"HKCU" };
-    wstring microphone_key{
-        L"SOFTWARE\\Microsoft\\Windows\\"
-        "CurrentVersion\\CapabilityAccessManager"
-        "\\ConsentStore\\microphone" };
+	//wstring main_key{ L"HKCU" };
+	//wstring microphone_key{
+	//	L"SOFTWARE\\Microsoft\\Windows\\"
+	//	"CurrentVersion\\CapabilityAccessManager"
+	//	"\\ConsentStore\\webcam" };
 
-    auto microphone_reg_key{
-        make_shared<RegKey>(main_key, microphone_key) };
-    auto file_reporter{ make_shared<FileReporter>(
-        filesystem::path{"D:\\report.txt"}) };
-    auto microphone_watcher{ make_shared<RegKeyChangeReporter>(
-        L"microphone", microphone_reg_key, file_reporter, parser) };
-    microphone_watcher->start();
+	//auto microphone_reg_key{
+	//	make_shared<RegKey>(main_key, microphone_key) };
+	//auto file_reporter{ make_shared<FileReporter>(
+	//	filesystem::path{"D:\\report.txt"}) };
+	//auto microphone_watcher{ make_shared<RegKeyChangeReporter>(
+	//	L"webcam", microphone_reg_key, file_reporter, parser) };
+	//microphone_watcher->start();
 
-    cin.get();
+	//cin.get();
 
-    microphone_watcher->stop();
+	//microphone_watcher->stop();
 
-    /*for (const auto& res : result)
-    {
-        std::cout 
-            << res.user_name << " " 
-            << res.password << " " 
-            << res.doamin << endl;
-    }*/
+
+	HWND res =GetForegroundWindow();
+	wchar_t lpString[1024] = TEXT("Sample Text");
+	GetWindowText(res, lpString, 1024);
+	wcout << lpString << endl;
+
+	//auto file_reporter{ make_shared<FileReporter>(
+	//	filesystem::path{"D:\\report.txt"}) };
+	//auto parser{ make_shared<UserInformationParser>("D:\\info.txt") };
+	//auto file_watcher{ make_shared<FileWatcher>(
+	//	file_reporter,
+	//	filesystem::path{"D:\\log-app.txt"},
+	//	filesystem::path{"D:\\log-open-log-file.txt"},
+	//	parser
+	//) };
+
+	//file_watcher->start();
+	//cin.get();
+
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

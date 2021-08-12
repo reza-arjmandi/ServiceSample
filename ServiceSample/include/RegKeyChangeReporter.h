@@ -8,7 +8,6 @@
 #include "RegKeyWatcher.h"
 #include "IMicroService.h"
 #include "UserInformationParser.h"
-#include "ImpersonateUser.h"
 
 using namespace std;
 using namespace darka;
@@ -76,7 +75,6 @@ private:
 			{
 				_reporter->println(_name + L" is enabled", 
 					user_info_.user_name);
-				watcher_->watch_change(user_info_);
 			}
 			else
 			{
