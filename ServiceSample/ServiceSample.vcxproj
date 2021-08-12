@@ -163,6 +163,7 @@
     <ClInclude Include="include\IMicroService.h" />
     <ClInclude Include="include\ImpersonateUser.h" />
     <ClInclude Include="include\IReporter.h" />
+    <ClInclude Include="include\ProcessUtil.h" />
     <ClInclude Include="include\RegKey.h" />
     <ClInclude Include="include\RegKeyChangeReporter.h" />
     <ClInclude Include="include\RegKeyException.h" />

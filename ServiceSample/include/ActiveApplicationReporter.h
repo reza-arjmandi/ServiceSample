@@ -15,18 +15,9 @@
 #include "IMicroService.h"
 #include "ImpersonateUser.h"
 #include "IReporter.h"
+#include "ProcessUtil.h"
 
 using namespace darka;
-
-
-#define BUFSIZE 4096
-
-TCHAR szCmdline[] = TEXT("Test.exe");
-
-HANDLE g_hChildStd_IN_Rd = NULL;
-HANDLE g_hChildStd_IN_Wr = NULL;
-HANDLE g_hChildStd_OUT_Rd = NULL;
-HANDLE g_hChildStd_OUT_Wr = NULL;
 
 class ActiveApplicationReporter : public IMicroService
 {
@@ -78,23 +69,8 @@ private:
 			{
 				_impersonate_user.Logon(info.user_name, info.domain, info.password);
 
-				SECURITY_ATTRIBUTES saAttr;
-
-				// Set the bInheritHandle flag so pipe handles are inherited.
-				saAttr.nLength = sizeof(SECURITY_ATTRIBUTES);
-				saAttr.bInheritHandle = TRUE;
-				saAttr.lpSecurityDescriptor = NULL;
-
-				// Create a pipe for the child process's STDOUT.
-				if (!CreatePipe(&g_hChildStd_OUT_Rd, &g_hChildStd_OUT_Wr, &saAttr, 0))
-					ErrorExit("StdoutRd CreatePipe");
-
-				// Ensure the read handle to the pipe for STDOUT is not inherited.
-				if (!SetHandleInformation(g_hChildStd_OUT_Rd, HANDLE_FLAG_INHERIT, 0))
-					ErrorExit("Stdout SetHandleInformation");
-
-				CreateChildProcess();
-				auto app_title_{ ReadFromPipe() };
+				wchar_t cmd_[1024] = L"D:\\GetActiveWindow.exe";
+				auto app_title_{ ProcessUtil::run_command(cmd_, info) };
 
 				auto search_user = _user_apptitle.find(info.user_name);
 				auto app_title{ wstring{ app_title_.begin(), app_title_.end() } };
@@ -112,76 +88,6 @@ private:
 			}
 			init_timer();
 			});
-	}
-
-	void CreateChildProcess()
-		// Create a child process that uses the previously created pipes for STDIN and STDOUT.
-	{
-		PROCESS_INFORMATION piProcInfo;
-		STARTUPINFO siStartInfo;
-		BOOL bSuccess = FALSE;
-
-		// Set up members of the PROCESS_INFORMATION structure.
-		ZeroMemory(&piProcInfo, sizeof(PROCESS_INFORMATION));
-
-		// Set up members of the STARTUPINFO structure.
-		// This structure specifies the STDIN and STDOUT handles for redirection.
-
-		ZeroMemory(&siStartInfo, sizeof(STARTUPINFO));
-		siStartInfo.cb = sizeof(STARTUPINFO);
-		siStartInfo.hStdError = g_hChildStd_OUT_Wr;
-		siStartInfo.hStdOutput = g_hChildStd_OUT_Wr;
-		siStartInfo.hStdInput = g_hChildStd_IN_Rd;
-		siStartInfo.dwFlags |= STARTF_USESTDHANDLES;
-
-		// Create the child process.
-		bSuccess = CreateProcess(NULL,
-			szCmdline,     // command line
-			NULL,          // process security attributes
-			NULL,          // primary thread security attributes
-			TRUE,          // handles are inherited
-			0,             // creation flags
-			NULL,          // use parent's environment
-			NULL,          // use parent's current directory
-			&siStartInfo,  // STARTUPINFO pointer
-			&piProcInfo);  // receives PROCESS_INFORMATION
-
-		 // If an error occurs, exit the application.
-		if (!bSuccess)
-			ErrorExit("CreateProcess");
-		else
-		{
-			// Close handles to the child process and its primary thread.
-			// Some applications might keep these handles to monitor the status
-			// of the child process, for example.
-
-			CloseHandle(piProcInfo.hProcess);
-			CloseHandle(piProcInfo.hThread);
-		}
-	}
-
-	string ReadFromPipe(void)
-
-		// Read output from the child process's pipe for STDOUT
-		// and write to the parent process's pipe for STDOUT.
-		// Stop when there is no more data.
-	{
-		DWORD dwRead, dwWritten;
-		CHAR chBuf[BUFSIZE];
-		BOOL bSuccess = FALSE;
-		HANDLE hParentStdOut = GetStdHandle(STD_OUTPUT_HANDLE);
-
-		bSuccess = ReadFile(g_hChildStd_OUT_Rd, chBuf, BUFSIZE, &dwRead, NULL);
-		return string{ chBuf };
-	}
-
-	void ErrorExit(char* msg)
-
-		// Format a readable error message, display a message box,
-		// and exit from the application.
-	{
-		//printf("%s\n", msg);
-		//exit(1);
 	}
 
 	filesystem::path report_path{ "D:\\log-app.txt" };
