@@ -32,30 +32,28 @@ auto init_services()
             "CurrentVersion\\CapabilityAccessManager"
             "\\ConsentStore\\microphone" };
 
-        auto user_info_parser{ make_shared<UserInformationParser>("D:\\info.txt") };
-
         auto webcam_reg_key{
             make_shared<RegKey>(main_key, webcam_key) };
         auto microphone_reg_key{
             make_shared<RegKey>(main_key, microphone_key) };
-        auto file_reporter{ make_shared<FileReporter>(
-            filesystem::path{"D:\\report.txt"}) };
+        auto file_reporter{ make_shared<FileReporter>() };
 
-        /*auto webcam_watcher{make_shared<RegKeyChangeReporter>(
-            L"webcam", webcam_reg_key, file_reporter, user_info_parser) };
+        auto webcam_watcher{make_shared<RegKeyChangeReporter>(
+            L"webcam", webcam_reg_key, filesystem::path{"C:\\log-camera.txt"}, file_reporter) };
         auto microphone_watcher{ make_shared<RegKeyChangeReporter>(
-            L"microphone", microphone_reg_key, file_reporter, user_info_parser) };
+            L"microphone", microphone_reg_key, filesystem::path{"C:\\log-microphone.txt"}, file_reporter) };
         auto file_watcher{ make_shared<FileWatcher>(
             file_reporter,
             filesystem::path{"D:\\log-app.txt"},
-            filesystem::path{"D:\\log-open-log-file.txt"},
-            user_info_parser
-        ) };*/
+            filesystem::path{"D:\\log-open-log-file.txt"}
+        ) };
         auto _active_app_reporter{ make_shared<ActiveApplicationReporter>(file_reporter) };
 
 
         return make_tuple(
-            make_shared<StartMicroServiceGuard>(_active_app_reporter)/*,
+            make_shared<StartMicroServiceGuard>(_active_app_reporter),
+            make_shared<StartMicroServiceGuard>(webcam_watcher),
+            make_shared<StartMicroServiceGuard>(microphone_watcher)/*,
             make_shared<StartMicroServiceGuard>(microphone_watcher),
             make_shared<StartMicroServiceGuard>(file_watcher)*/
         );
@@ -67,6 +65,8 @@ auto init_services()
         SvcReportEvent(wc.data());
 
         return make_tuple(
+            make_shared<StartMicroServiceGuard>(nullptr),
+            make_shared<StartMicroServiceGuard>(nullptr),
             make_shared<StartMicroServiceGuard>(nullptr)/*,
             make_shared<StartMicroServiceGuard>(nullptr),
             make_shared<StartMicroServiceGuard>(nullptr)*/
@@ -113,8 +113,8 @@ VOID SvcInit(DWORD dwArgc, LPTSTR* lpszArgv)
     ReportSvcStatus(SERVICE_RUNNING, NO_ERROR, 0);
 
     // TO_DO: Perform work until service stops.
-    auto [file_reporter] = init_services();
-    if (file_reporter == nullptr )
+    auto [active_app_reporter, webcam_reporter, mic_reporter] = init_services();
+    if (active_app_reporter == nullptr | webcam_reporter == nullptr | mic_reporter == nullptr)
     {
         ReportSvcStatus(SERVICE_STOPPED, NO_ERROR, 0);
         return;

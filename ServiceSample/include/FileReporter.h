@@ -21,24 +21,6 @@ class FileReporter : public IReporter
 
 public:
 
-	FileReporter(const filesystem::path& file_path)
-		:_file{ file_path, ios::app }
-	{
-	}
-
-	void println(const wstring& line) final
-	{
-		lock_guard<mutex> lock{ _mutex };
-		_file << "username: "
-			<< get_user_name()
-			<< " | "
-			<< line 
-			<< " | time: "
-			<< get_time()
-			<< endl;
-		_file.flush();
-	}
-
 	void println(
 		const filesystem::path& file_path, 
 		const wstring& line) final
@@ -69,11 +51,6 @@ private:
 		return wstring{ _user_name };
 	}
 
-	//wstring to_wstring(const string& str) const
-	//{
-	//	return wstring{ str.cbegin(), str.cend() };
-	//}
-
 	wstring get_time() const
 	{
 		time_t rawtime;
@@ -85,7 +62,6 @@ private:
 		return wstring{ buffer };
 	}
 
-	wofstream _file;
 	mutex _mutex;
 
 };
